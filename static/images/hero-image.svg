@@ -1,0 +1,26 @@
+<svg viewBox="0 0 480 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of an open book with a graduation cap">
+  <circle cx="240" cy="210" r="170" fill="#F3ECD9"/>
+  <circle cx="380" cy="90" r="14" fill="#C97F1F"/>
+  <circle cx="90" cy="320" r="10" fill="#E8A33D"/>
+  <circle cx="70" cy="110" r="7" fill="#E8A33D"/>
+
+  <path d="M60 250 Q240 210 420 250 L420 270 Q240 232 60 270 Z" fill="#12332A"/>
+
+  <path d="M240 130 Q150 105 70 130 L70 250 Q150 225 240 250 Z" fill="#1F4B3F"/>
+  <path d="M240 130 Q330 105 410 130 L410 250 Q330 225 240 250 Z" fill="#295E4F"/>
+
+  <path d="M240 140 Q170 120 100 140 L100 145 Q170 125 240 145 Z" fill="#E8A33D"/>
+  <path d="M240 160 Q170 140 100 160 L100 165 Q170 145 240 165 Z" fill="#E8A33D"/>
+  <path d="M240 180 Q170 160 100 180 L100 185 Q170 165 240 185 Z" fill="#E8A33D"/>
+
+  <path d="M240 140 Q310 120 380 140 L380 145 Q310 125 240 145 Z" fill="#F4D9AA"/>
+  <path d="M240 160 Q310 140 380 160 L380 165 Q310 145 240 165 Z" fill="#F4D9AA"/>
+  <path d="M240 180 Q310 160 380 180 L380 185 Q310 165 240 185 Z" fill="#F4D9AA"/>
+
+  <g transform="translate(240 60)">
+    <polygon points="0,0 90,26 0,52 -90,26" fill="#12332A"/>
+    <polygon points="0,10 60,28 0,42 -60,28" fill="#1F4B3F"/>
+    <circle cx="90" cy="26" r="4" fill="#C97F1F"/>
+    <line x1="90" y1="26" x2="90" y2="60" stroke="#C97F1F" stroke-width="2"/>
+  </g>
+</svg>

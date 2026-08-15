@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Profile Information -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <!-- Removed profile picture img tag -->
+                    <h2 class="card-title">{{ current_user.username }}</h2>
+                    <p class="text-muted">{{ current_user.department }}</p>
+                    <p class="text-muted">Student ID: {{ current_user.student_id }}</p>
+                    {% if current_user.bio %}
+                    <p class="card-text">{{ current_user.bio }}</p>
+                    {% endif %}
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+
+            <!-- Activity Stats -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Activity Stats</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Materials Uploaded
+                            <span class="badge bg-primary rounded-pill">{{ user_materials|length }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Comments Made
+                            <span class="badge bg-primary rounded-pill">{{ user_comments|length }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Downloads
+                            <span class="badge bg-primary rounded-pill">
+                                {{ user_materials|sum(attribute='downloads') }}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Activity -->
+        <div class="col-md-8">
+            <!-- Uploaded Materials -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Uploaded Materials</h5>
+                    {% if user_materials %}
+                    <div class="list-group list-group-flush">
+                        {% for material in user_materials %}
+                        <a href="{{ url_for('material_detail', material_id=material.id) }}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ material.title }}</h6>
+                                <small class="text-muted">{{ material.upload_date.strftime('%b %d, %Y') }}</small>
+                            </div>
+                            <p class="mb-1">{{ material.description[:100] }}...</p>
+                            <small class="text-muted">
+                                <span class="badge bg-primary">{{ material.category.replace('_', ' ')|title }}</span>
+                                <span class="badge bg-secondary">{{ material.level }} Level</span>
+                                <i class="fas fa-download"></i> {{ material.downloads }} downloads
+                            </small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No materials uploaded yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent Comments -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Comments</h5>
+                    {% if user_comments %}
+                    <div class="list-group list-group-flush">
+                        {% for comment in user_comments %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">
+                                    <a href="{{ url_for('material_detail', material_id=comment.material.id) }}">
+                                        {{ comment.material.title }}
+                                    </a>
+                                </h6>
+                                <small class="text-muted">{{ comment.date_posted.strftime('%b %d, %Y %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">{{ comment.content }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No comments made yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

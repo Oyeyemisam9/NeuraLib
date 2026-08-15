@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Hero Section -->
+    <div class="bg-primary text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="display-4 fw-bold">Welcome to NeuraLib</h1>
+                    <p class="lead">Your one-stop platform for academic materials and resources.</p>
+                    <div class="mt-4">
+                        <a href="{{ url_for('register') }}" class="btn btn-light btn-lg me-3">Get Started</a>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">Login</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <img src="{{ url_for('static', filename='images/hero-image.svg') }}" alt="NeuraLib Hero" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container py-5">
+        <h2 class="text-center mb-5">Why Choose NeuraLib?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Course Materials</h3>
+                        <p class="card-text">Access course outlines, manuals, and study materials for all your courses.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Community Driven</h3>
+                        <p class="card-text">Share and discover materials uploaded by fellow students and faculty.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-star fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Quality Content</h3>
+                        <p class="card-text">Rate and review materials to help others find the best resources.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">How It Works</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="h4 mb-0">1</span>
+                        </div>
+                        <h4>Create Account</h4>
+                        <p>Sign up with your student credentials</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="h4 mb-0">2</span>
+                        </div>
+                        <h4>Browse Materials</h4>
+                        <p>Find materials for your courses</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="h4 mb-0">3</span>
+                        </div>
+                        <h4>Download & Share</h4>
+                        <p>Access and share materials with others</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="h4 mb-0">4</span>
+                        </div>
+                        <h4>Rate & Review</h4>
+                        <p>Help others by rating materials</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h2 class="mb-4">Ready to Get Started?</h2>
+                <p class="lead mb-4">Join our community of students and faculty members today.</p>
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Create Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

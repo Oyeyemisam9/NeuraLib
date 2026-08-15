@@ -1,0 +1,21 @@
+{
+    "name": "NeuraLibrary",
+    "short_name": "NeuraLib",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1976d2",
+    "theme_color": "#1976d2",
+    "description": "A smart library for students.",
+    "icons": [
+        {
+            "src": "/static/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

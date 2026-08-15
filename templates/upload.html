@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Add material - NeuraLib{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="mb-4">
+                <h2 class="mb-1"><i class="fas fa-cloud-upload-alt text-primary me-2"></i>Add material</h2>
+                <p class="text-muted mb-0">Add a new book, manual, or document for students to find and download.</p>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="e.g. Introduction to Algorithms" required>
+                            <div class="invalid-feedback">Please provide a title.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="A short summary of what this material covers" required></textarea>
+                            <div class="invalid-feedback">Please provide a description.</div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label for="category" class="form-label">Material type</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">Select a type</option>
+                                    <option value="textbook">Textbook</option>
+                                    <option value="manual">Manual</option>
+                                    <option value="pdf">PDF document</option>
+                                    <option value="course_outline">Course outline</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a material type.</div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label for="level" class="form-label">Level</label>
+                                <select class="form-select" id="level" name="level" required>
+                                    <option value="">Select a level</option>
+                                    <option value="100">100 level</option>
+                                    <option value="200">200 level</option>
+                                    <option value="300">300 level</option>
+                                    <option value="400">400 level</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a level.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <label for="course_id" class="form-label">Course</label>
+                            <select class="form-select" id="course_id" name="course_id" required>
+                                <option value="">Select a course</option>
+                                {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.code }} - {{ course.name }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if not courses %}
+                            <div class="form-text text-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                No courses yet - <a href="{{ url_for('add_course') }}">add one first</a>, then come back here.
+                            </div>
+                            {% else %}
+                            <div class="invalid-feedback">Please select a course.</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="file" class="form-label">File</label>
+                            <input type="file" class="form-control" id="file" name="file" required accept=".pdf,.doc,.docx,.txt">
+                            <div class="form-text">PDF, DOC, DOCX, or TXT - max size 16MB.</div>
+                            <div class="invalid-feedback">Please select a file.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-cloud-upload-alt me-1"></i> Add material
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Bootstrap client-side validation styling
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
+{% endblock %}

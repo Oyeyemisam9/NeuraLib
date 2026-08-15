@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} Questions - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h2 class="mb-0">{{ category.name }} <span class="text-muted fs-6">({{ questions|length }} question{{ 's' if questions|length != 1 }})</span></h2>
+        <a href="{{ url_for('admin_quiz') }}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> All Categories
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Add a question</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin_quiz_questions', category_id=category.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label class="form-label">Question</label>
+                            <textarea class="form-control" name="question_text" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Option A</label>
+                            <input type="text" class="form-control" name="option_a" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Option B</label>
+                            <input type="text" class="form-control" name="option_b" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Option C</label>
+                            <input type="text" class="form-control" name="option_c" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Option D</label>
+                            <input type="text" class="form-control" name="option_d" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Correct option</label>
+                            <select class="form-select" name="correct_option" required>
+                                <option value="">Select the correct one</option>
+                                <option value="a">A</option>
+                                <option value="b">B</option>
+                                <option value="c">C</option>
+                                <option value="d">D</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Explanation (optional, shown after answering)</label>
+                            <textarea class="form-control" name="explanation" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-plus me-1"></i> Add Question
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            {% if not questions %}
+            <div class="card shadow-sm">
+                <div class="card-body text-center text-muted py-5">
+                    No questions in this category yet - add the first one.
+                </div>
+            </div>
+            {% else %}
+            {% for q in questions %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <p class="fw-semibold mb-2">{{ q.question_text }}</p>
+                        <form action="{{ url_for('admin_delete_quiz_question', question_id=q.id) }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this question?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="{{ 'text-success fw-semibold' if q.correct_option == 'a' }}">A. {{ q.option_a }} {% if q.correct_option == 'a' %}<i class="fas fa-check"></i>{% endif %}</li>
+                        <li class="{{ 'text-success fw-semibold' if q.correct_option == 'b' }}">B. {{ q.option_b }} {% if q.correct_option == 'b' %}<i class="fas fa-check"></i>{% endif %}</li>
+                        <li class="{{ 'text-success fw-semibold' if q.correct_option == 'c' }}">C. {{ q.option_c }} {% if q.correct_option == 'c' %}<i class="fas fa-check"></i>{% endif %}</li>
+                        <li class="{{ 'text-success fw-semibold' if q.correct_option == 'd' }}">D. {{ q.option_d }} {% if q.correct_option == 'd' %}<i class="fas fa-check"></i>{% endif %}</li>
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

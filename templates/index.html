@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Search and Filters -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('home') }}" class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="search" 
+                               placeholder="Search materials..." value="{{ request.args.get('search', '') }}">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-md-2">
+                    <select class="form-select" name="category">
+                        <option value="">All Categories</option>
+                        <option value="course_outline" {% if request.args.get('category') == 'course_outline' %}selected{% endif %}>
+                            Course Outline
+                        </option>
+                        <option value="textbook" {% if request.args.get('category') == 'textbook' %}selected{% endif %}>
+                            Textbook
+                        </option>
+                        <option value="manual" {% if request.args.get('category') == 'manual' %}selected{% endif %}>
+                            Manual
+                        </option>
+                        <option value="pdf" {% if request.args.get('category') == 'pdf' %}selected{% endif %}>
+                            PDF
+                        </option>
+                    </select>
+                </div>
+                
+                <div class="col-md-2">
+                    <select class="form-select" name="level">
+                        <option value="">All Levels</option>
+                        {% for level in ['100', '200', '300', '400'] %}
+                        <option value="{{ level }}" {% if request.args.get('level') == level %}selected{% endif %}>
+                            {{ level }} Level
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-2">
+                    <select class="form-select" name="course">
+                        <option value="">All Courses</option>
+                        {% for course in courses %}
+                        <option value="{{ course.id }}" {% if request.args.get('course')|int == course.id %}selected{% endif %}>
+                            {{ course.code }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Popular Materials -->
+    <h2 class="mb-4">Popular Materials</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-5">
+        {% for material in materials.items[:4] %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ material.title }}</h5>
+                    <p class="card-text text-muted">{{ material.description[:100] }}...</p>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge bg-primary me-2">{{ material.category.replace('_', ' ')|title }}</span>
+                        <span class="badge bg-secondary">{{ material.level }} Level</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="text-warning me-2">
+                            {% for i in range(5) %}
+                                {% if i < material.average_rating|int %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        <small class="text-muted">({{ material.average_rating|round(1) }})</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-download"></i> {{ material.downloads }}
+                        </small>
+                        <a href="{{ url_for('material_detail', material_id=material.id) }}" 
+                           class="btn btn-sm btn-primary">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- AI Recommendations -->
+    <h2 class="mb-4">Recommended for You</h2>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for material in recommendations %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ material.title }}</h5>
+                    <p class="card-text text-muted">{{ material.description[:100] }}...</p>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge bg-primary me-2">{{ material.category.replace('_', ' ')|title }}</span>
+                        <span class="badge bg-secondary">{{ material.level }} Level</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="text-warning me-2">
+                            {% for i in range(5) %}
+                                {% if i < material.average_rating|int %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        <small class="text-muted">({{ material.average_rating|round(1) }})</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-download"></i> {{ material.downloads }}
+                        </small>
+                        <a href="{{ url_for('material_detail', material_id=material.id) }}" 
+                           class="btn btn-sm btn-primary">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if materials.pages > 1 %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if materials.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('home', page=materials.prev_num, search=request.args.get('search', ''), category=request.args.get('category', ''), level=request.args.get('level', ''), course=request.args.get('course', '')) }}">
+                    Previous
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+            {% endif %}
+
+            {% for page_num in materials.iter_pages(left_edge=2, left_current=2, right_current=3, right_edge=2) %}
+                {% if page_num %}
+                    {% if page_num == materials.page %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ page_num }}</span>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('home', page=page_num, search=request.args.get('search', ''), category=request.args.get('category', ''), level=request.args.get('level', ''), course=request.args.get('course', '')) }}">
+                            {{ page_num }}
+                        </a>
+                    </li>
+                    {% endif %}
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if materials.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('home', page=materials.next_num, search=request.args.get('search', ''), category=request.args.get('category', ''), level=request.args.get('level', ''), course=request.args.get('course', '')) }}">
+                    Next
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

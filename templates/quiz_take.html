@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} Quiz - NeuraLib{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="mb-3">
+                <h2 class="mb-1">{{ category.name }}</h2>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-primary" id="quiz-progress-bar" role="progressbar" style="width: 0%;"></div>
+                </div>
+                <p class="text-muted small mt-1 mb-0" id="quiz-progress-label"></p>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div id="quiz-question-area"></div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-outline-primary" id="quiz-prev-btn">
+                            <i class="fas fa-arrow-left me-1"></i> Previous
+                        </button>
+                        <button type="button" class="btn btn-primary" id="quiz-next-btn" disabled>
+                            Next <i class="fas fa-arrow-right ms-1"></i>
+                        </button>
+                        <button type="button" class="btn btn-success d-none" id="quiz-submit-btn" disabled>
+                            <i class="fas fa-check me-1"></i> Submit Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="quiz-submit-form" method="POST" action="{{ url_for('quiz_submit', category_id=category.id) }}" class="d-none">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="answers" id="quiz-answers-input">
+</form>
+
+<script>
+const quizData = {{ quiz_data|tojson }};
+const answers = {};
+let currentIndex = 0;
+
+const questionArea = document.getElementById('quiz-question-area');
+const progressBar = document.getElementById('quiz-progress-bar');
+const progressLabel = document.getElementById('quiz-progress-label');
+const prevBtn = document.getElementById('quiz-prev-btn');
+const nextBtn = document.getElementById('quiz-next-btn');
+const submitBtn = document.getElementById('quiz-submit-btn');
+
+function renderQuestion() {
+    const q = quizData[currentIndex];
+    progressBar.style.width = (((currentIndex + 1) / quizData.length) * 100) + '%';
+    progressLabel.textContent = 'Question ' + (currentIndex + 1) + ' of ' + quizData.length;
+
+    let html = '<h5 class="mb-3">' + q.question + '</h5>';
+    html += '<div class="d-flex flex-column gap-2">';
+    q.options.forEach(function (opt) {
+        const selected = answers[q.id] === opt.key;
+        html += '<button type="button" class="btn text-start quiz-option-btn ' +
+                (selected ? 'btn-primary' : 'btn-outline-secondary') +
+                '" data-key="' + opt.key + '">' + opt.text + '</button>';
+    });
+    html += '</div>';
+    questionArea.innerHTML = html;
+
+    document.querySelectorAll('.quiz-option-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            answers[q.id] = btn.dataset.key;
+            renderQuestion();
+        });
+    });
+
+    prevBtn.style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+
+    const isLast = currentIndex === quizData.length - 1;
+    const hasAnswer = answers[q.id] !== undefined;
+    nextBtn.classList.toggle('d-none', isLast);
+    submitBtn.classList.toggle('d-none', !isLast);
+    nextBtn.disabled = !hasAnswer;
+    submitBtn.disabled = !hasAnswer;
+}
+
+prevBtn.addEventListener('click', function () {
+    if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+});
+
+nextBtn.addEventListener('click', function () {
+    if (currentIndex < quizData.length - 1) { currentIndex++; renderQuestion(); }
+});
+
+submitBtn.addEventListener('click', function () {
+    document.getElementById('quiz-answers-input').value = JSON.stringify(answers);
+    document.getElementById('quiz-submit-form').submit();
+});
+
+renderQuestion();
+</script>
+{% endblock %}

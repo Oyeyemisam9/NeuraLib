@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Add Quiz Category - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <h2 class="mb-4"><i class="fas fa-plus text-primary me-2"></i>Add Quiz Category</h2>
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin_add_quiz_category') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Category name</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="e.g. General Knowledge, Science, History" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="description" class="form-label">Description (optional)</label>
+                            <textarea class="form-control" id="description" name="description" rows="2"></textarea>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Create Category</button>
+                            <a href="{{ url_for('admin_quiz') }}" class="btn btn-outline-primary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

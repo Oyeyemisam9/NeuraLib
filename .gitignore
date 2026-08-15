@@ -1,0 +1,27 @@
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Environment / secrets
+.env
+
+# Databases (local dev data - don't ship this to git)
+*.db
+db_backups/
+
+# Instance folder (Flask default, unused here but ignore just in case)
+instance/
+
+# Local file storage fallback (only used when R2 isn't configured) -
+# uploaded materials shouldn't be committed to git either way.
+uploads/materials/
+
+# Editor/OS cruft
+.DS_Store
+.vscode/
+.idea/

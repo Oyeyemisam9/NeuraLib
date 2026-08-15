@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Help Desk - {{ student.username }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2 class="mb-1"><i class="fas fa-user-graduate text-primary me-2"></i>{{ student.username }}</h2>
+                    <p class="text-muted mb-0">{{ student.email }}{% if student.department %} &middot; {{ student.department }}{% endif %}</p>
+                </div>
+                <a href="{{ url_for('admin_help_desk') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Inbox
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-3 p-md-4">
+                    <div id="chat-log" class="d-flex flex-column gap-2 mb-3" style="max-height: 55vh; overflow-y: auto;">
+                        {% if not messages %}
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-comment-dots fa-2x mb-2 d-block"></i>
+                            No messages yet.
+                        </div>
+                        {% endif %}
+                        {% for message in messages %}
+                        <div class="d-flex {{ 'justify-content-end' if message.sender_id != student.id else 'justify-content-start' }}">
+                            <div class="p-2 px-3 rounded-3 {{ 'text-white' if message.sender_id != student.id else '' }}"
+                                 style="max-width: 75%; background-color: {{ 'var(--primary-color)' if message.sender_id != student.id else 'var(--background)' }}; border: {{ '' if message.sender_id != student.id else '1px solid var(--border-color)' }};">
+                                {% if message.sender_id == student.id %}
+                                <div class="small fw-semibold mb-1" style="color: var(--secondary-dark);">{{ student.username }}</div>
+                                {% endif %}
+                                <div style="white-space: pre-wrap;">{{ message.body }}</div>
+                                <div class="small mt-1 {{ 'text-white-50' if message.sender_id != student.id else 'text-muted' }}">
+                                    {{ message.created_at.strftime('%b %d, %H:%M') }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <form method="POST" action="{{ url_for('admin_help_desk_thread', student_id=student.id) }}" class="d-flex gap-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="text" name="body" class="form-control" placeholder="Reply to {{ student.username }}..." required autocomplete="off">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var log = document.getElementById('chat-log');
+    if (log) { log.scrollTop = log.scrollHeight; }
+</script>
+{% endblock %}
