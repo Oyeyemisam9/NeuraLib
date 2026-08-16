@@ -71,7 +71,12 @@ if LIMITER_AVAILABLE:
     limiter = Limiter(
         app=app,
         key_func=get_remote_address,
-        default_limits=["200 per day", "50 per hour"],
+        # This is a global fallback for any route without its own specific
+        # limit below - kept generous since normal browsing (especially
+        # several people sharing one IP, common on mobile networks) can add
+        # up fast. The routes that actually need tight protection (login,
+        # register, password reset, upload) have their own stricter limits.
+        default_limits=["2000 per day", "500 per hour"],
         storage_uri=os.environ.get('REDIS_URL', 'memory://')
     )
 else:
@@ -298,7 +303,7 @@ def home():
                          recommendations=recommendations)
 
 @app.route('/login', methods=['GET', 'POST'])
-@limiter.limit("5 per minute") if LIMITER_AVAILABLE else lambda x: x
+@limiter.limit("20 per minute") if LIMITER_AVAILABLE else lambda x: x
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -336,7 +341,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
-@limiter.limit("10 per hour") if LIMITER_AVAILABLE else lambda x: x
+@limiter.limit("40 per hour") if LIMITER_AVAILABLE else lambda x: x
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -1243,24 +1248,34 @@ with app.app_context():
 # Add error handlers
 @app.errorhandler(429)
 def ratelimit_handler(e):
-    return jsonify(error="Rate limit exceeded"), 429
+    return render_template('error.html', code=429, icon='fa-stopwatch',
+                          message="You've made too many requests in a short time. Please wait a bit and try again."), 429
 
 @app.errorhandler(413)
 def request_entity_too_large(error):
-    return jsonify(error="File too large"), 413
+    return render_template('error.html', code=413, icon='fa-file-circle-exclamation',
+                          message="That file is too large. The maximum upload size is 16MB."), 413
 
 @app.errorhandler(400)
 def bad_request(error):
-    return jsonify(error="Bad request"), 400
+    return render_template('error.html', code=400, icon='fa-triangle-exclamation',
+                          message="Something about that request wasn't right. Please try again."), 400
+
+@app.errorhandler(403)
+def forbidden(error):
+    return render_template('error.html', code=403, icon='fa-lock',
+                          message="You don't have permission to access that page."), 403
 
 @app.errorhandler(404)
 def not_found(error):
-    return jsonify(error="Not found"), 404
+    return render_template('error.html', code=404, icon='fa-map-signs',
+                          message="That page doesn't exist, or may have been moved."), 404
 
 @app.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
-    return jsonify(error="Internal server error"), 500
+    return render_template('error.html', code=500, icon='fa-server',
+                          message="Something went wrong on our end. Please try again in a moment."), 500
 
 if __name__ == "__main__":
     from waitress import serve

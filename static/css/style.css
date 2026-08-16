@@ -15,7 +15,7 @@
     --warning-color: #E8A33D;
     --info-color: #3D7A7A;
     --border-radius: 10px;
-    --box-shadow: 0 1px 2px rgba(18, 51, 42, 0.06), 0 4px 10px rgba(18, 51, 42, 0.06);
+    --box-shadow: 0 1px 2px rgba(18, 51, 42, 0.10), 0 2px 6px rgba(18, 51, 42, 0.10);
     --transition: all 0.2s ease;
     --font-heading: 'Poppins', sans-serif;
     --font-body: 'Inter', sans-serif;
@@ -188,6 +188,7 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--primary-color);
     box-shadow: var(--box-shadow);
     padding: 0.85rem 0;
+    transition: transform 0.3s ease;
 }
 
 .navbar-brand {
@@ -225,7 +226,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Cards */
 .card {
-    border: none;
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     transition: var(--transition);
@@ -235,8 +236,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(18, 51, 42, 0.18);
 }
 
 .card-title {
@@ -268,7 +269,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .form-control:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(31, 75, 63, 0.25);
 }
 
 .form-label {
@@ -358,11 +359,6 @@ h1, h2, h3, h4, h5, h6 {
 
     .card {
         margin-bottom: 1rem;
-    }
-
-    .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
     }
 
     .form-control {
@@ -485,6 +481,13 @@ h1, h2, h3, h4, h5, h6 {
         padding-right: 1rem;
     }
 
+    /* Cards using p-4 (extra spacious padding, meant for larger screens)
+       compound with the container/column gutters above and eat a lot of
+       usable width on small phones - trim it back here specifically. */
+    .card-body.p-4, .card-body.p-md-4 {
+        padding: 1rem !important;
+    }
+
     .card {
         margin-bottom: 1rem;
     }
@@ -492,12 +495,6 @@ h1, h2, h3, h4, h5, h6 {
     .profile-picture {
         width: 100px;
         height: 100px;
-    }
-
-    .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-        padding: 0.75rem 1rem;
     }
 
     .table-responsive {
@@ -515,7 +512,17 @@ h1, h2, h3, h4, h5, h6 {
         grid-template-columns: 1fr;
     }
 
-    /* Improved touch targets for mobile */
+    /* Comfortable tap targets on mobile without forcing every button
+       to stack full-width - buttons meant to be full-width already use
+       the .w-100 class explicitly in the templates. */
+    .btn {
+        padding: 0.6rem 1.1rem;
+    }
+
+    .btn-sm {
+        padding: 0.4rem 0.75rem;
+    }
+
     .nav-link, .dropdown-item {
         padding: 0.75rem 1rem;
         min-height: 44px;
@@ -633,3 +640,28 @@ h1, h2, h3, h4, h5, h6 {
     transition: transform 0.2s;
     z-index: 1000;
 } 
+/* Password show/hide toggle */
+.password-toggle-wrapper {
+    position: relative;
+}
+
+.password-toggle-wrapper input {
+    padding-right: 2.75rem;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0.25rem;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--light-text);
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    z-index: 5;
+}
+
+.password-toggle:hover {
+    color: var(--primary-color);
+}

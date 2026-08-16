@@ -328,20 +328,32 @@ document.addEventListener('DOMContentLoaded', () => {
 // Mobile Scroll Improvements
 let lastScrollTop = 0;
 const navbar = document.querySelector('.navbar');
+const navbarCollapseEl = document.getElementById('navbarNav');
 
 if (navbar) {
     window.addEventListener('scroll', () => {
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        if (scrollTop > lastScrollTop) {
-            // Scrolling down
-            navbar.style.transform = 'translateY(-100%)';
-        } else {
-            // Scrolling up
+
+        // Never hide the navbar while the mobile menu is open, and ignore
+        // tiny scroll movements (e.g. the bounce from just touching the
+        // screen) so the nav doesn't jitter or disappear mid-tap.
+        const menuIsOpen = navbarCollapseEl && navbarCollapseEl.classList.contains('show');
+        const scrollDelta = Math.abs(scrollTop - lastScrollTop);
+
+        if (!menuIsOpen && scrollDelta > 10) {
+            if (scrollTop > lastScrollTop && scrollTop > 80) {
+                // Scrolling down
+                navbar.style.transform = 'translateY(-100%)';
+            } else {
+                // Scrolling up
+                navbar.style.transform = 'translateY(0)';
+            }
+            lastScrollTop = scrollTop;
+        }
+
+        if (menuIsOpen) {
             navbar.style.transform = 'translateY(0)';
         }
-        
-        lastScrollTop = scrollTop;
     });
 }
 
@@ -384,3 +396,28 @@ function isCachedOffline(url, callback) {
         cache.match(url).then(match => callback(!!match));
     });
 }
+
+// --------------------------------------------------------------------
+// Password show/hide toggle. Add class "password-toggle-wrapper" to a
+// wrapper div containing a password <input> and a toggle <button
+// class="password-toggle">, and this wires them all up automatically.
+// --------------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.password-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const wrapper = btn.closest('.password-toggle-wrapper');
+            const input = wrapper ? wrapper.querySelector('input') : null;
+            if (!input) return;
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) { icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); }
+                btn.setAttribute('aria-label', 'Hide password');
+            } else {
+                input.type = 'password';
+                if (icon) { icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
+                btn.setAttribute('aria-label', 'Show password');
+            }
+        });
+    });
+});
