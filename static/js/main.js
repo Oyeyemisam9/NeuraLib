@@ -37,31 +37,15 @@ document.getElementById('dismiss-pwa').addEventListener('click', () => {
 });
 
 // Mobile Navigation
-document.addEventListener('DOMContentLoaded', () => {
-    const navbarToggler = document.querySelector('.navbar-toggler');
-    const navbarCollapse = document.querySelector('.navbar-collapse');
-
-    if (navbarToggler && navbarCollapse) {
-        navbarToggler.addEventListener('click', () => {
-            navbarCollapse.classList.toggle('show');
-        });
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!navbarCollapse.contains(e.target) && !navbarToggler.contains(e.target)) {
-                navbarCollapse.classList.remove('show');
-            }
-        });
-
-        // Close mobile menu when clicking a link
-        const navLinks = navbarCollapse.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                navbarCollapse.classList.remove('show');
-            });
-        });
-    }
-});
+// Note: the hamburger toggle (data-bs-toggle="collapse") and the "admin"
+// dropdown (data-bs-toggle="dropdown") are both handled natively by
+// Bootstrap's own JS bundle already loaded on the page - no custom JS
+// needed here. A previous version of this file duplicated that behavior
+// by hand, which conflicted with Bootstrap's dropdown handling: tapping
+// the "admin" dropdown was also caught by a generic "close menu on any
+// .nav-link click" listener, so the whole mobile menu closed instead of
+// the Profile/Logout submenu opening. Removed entirely to let Bootstrap
+// handle both correctly on its own.
 
 // Loading Spinner
 function showLoading() {
