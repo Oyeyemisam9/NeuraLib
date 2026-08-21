@@ -12,6 +12,7 @@ from sqlalchemy.sql import or_
 import uuid
 import random
 import json
+import threading
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 
@@ -159,6 +160,17 @@ def generate_verification_token():
 def generate_password_reset_token():
     return secrets.token_urlsafe(32)
 
+def send_async_email(app, msg):
+    """Sends an email in a background thread so the request that triggered
+    it (e.g. registration) can respond to the browser immediately instead
+    of blocking until the SMTP server responds - which can otherwise hang
+    a page load for a long time if the mail server is slow."""
+    with app.app_context():
+        try:
+            mail.send(msg)
+        except Exception as e:
+            print(f"Background email send failed: {str(e)}")
+
 def send_verification_email(user):
     token = generate_verification_token()
     user.verification_token = token
@@ -172,7 +184,7 @@ def send_verification_email(user):
 
 If you did not make this request then simply ignore this email.
 '''
-    mail.send(msg)
+    threading.Thread(target=send_async_email, args=(app, msg), daemon=True).start()
 
 def send_password_reset_email(user):
     token = generate_password_reset_token()
@@ -187,7 +199,7 @@ def send_password_reset_email(user):
 
 If you did not make this request then simply ignore this email.
 '''
-    mail.send(msg)
+    threading.Thread(target=send_async_email, args=(app, msg), daemon=True).start()
 
 def validate_password(password):
     """Validate password strength"""
